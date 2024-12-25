@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Watch Together</title>
+    <style>
+        /* General Styles */
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #1a1a1a;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            flex-direction: column;
+            color: white;
+        }
+
+        h1, h2, h4 {
+            margin: 0;
+            font-weight: 600;
+        }
+
+        h1 {
+            font-size: 2.5em;
+        }
+
+        h2 {
+            font-size: 1.8em;
+            color: #ff8c00;
+        }
+
+        h4 {
+            font-size: 1.2em;
+        }
+
+        /* Home Section */
+        #home, #room {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            max-width: 600px;
+            padding: 20px;
+            border-radius: 10px;
+            background: linear-gradient(135deg, #1e3c72, #2a5298);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+            transition: all 0.3s ease-in-out;
+        }
+
+        #home {
+            background-color: #222;
+        }
+
+        #room {
+            display: none;
+            background-color: #333;
+            height: 90%;
+        }
+
+        input, button {
+            padding: 12px 20px;
+            margin: 12px 0;
+            border-radius: 8px;
+            border: none;
+            font-size: 16px;
+            width: 250px;
+            transition: all 0.3s ease;
+        }
+
+        input:focus, button:focus {
+            outline: none;
+            border: 2px solid #ff8c00;
+        }
+
+        button {
+            background-color: #ff8c00;
+            color: white;
+            cursor: pointer;
+            font-size: 18px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+            transition: all 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #e67e00;
+            transform: translateY(-3px);
+            box-shadow: 0 6px 10px rgba(0, 0, 0, 0.3);
+        }
+
+        button:active {
+            transform: translateY(1px);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Chat Section */
+        #chat-container {
+            margin-top: 20px;
+            width: 100%;
+        }
+
+        #chat-box {
+            height: 200px;
+            overflow-y: auto;
+            border-radius: 10px;
+            padding: 10px;
+            background-color: #1c1c1c;
+            border: 1px solid #444;
+            box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.2);
+        }
+
+        #chat-input {
+            width: 100%;
+            padding: 10px;
+            margin-top: 10px;
+            border-radius: 8px;
+            border: 1px solid #666;
+            background-color: #222;
+            color: white;
+            font-size: 16px;
+            transition: background-color 0.3s ease;
+        }
+
+        #chat-input:focus {
+            background-color: #333;
+        }
+
+        /* Mute Button */
+        #mute-button {
+            padding: 12px;
+            margin-top: 20px;
+            width: 250px;
+            background-color: #ff4444;
+            color: white;
+            font-size: 18px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+        }
+
+        #mute-button.muted {
+            background-color: #ff7777;
+        }
+
+        #mute-button:hover {
+            background-color: #e63e3e;
+            transform: translateY(-3px);
+            box-shadow: 0 6px 10px rgba(0, 0, 0, 0.3);
+        }
+
+        #mute-button:active {
+            transform: translateY(1px);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        /* User List */
+        #user-list {
+            margin-top: 20px;
+            width: 250px;
+            height: 150px;
+            border-radius: 8px;
+            border: 1px solid #444;
+            background-color: #222;
+            color: white;
+            padding: 10px;
+            overflow-y: auto;
+        }
+
+        #user-list li {
+            padding: 8px;
+            margin: 5px 0;
+            background-color: #333;
+            border-radius: 6px;
+            list-style: none;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 16px;
+            transition: background-color 0.3s ease;
+        }
+
+        #user-list li:hover {
+            background-color: #444;
+        }
+
+        /* YouTube Section */
+        #video-player {
+            margin-top: 20px;
+            width: 100%;
+            text-align: center;
+        }
+
+        /* Fullscreen User Info */
+        .user-info {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: rgba(0, 0, 0, 0.7);
+            padding: 10px;
+            border-radius: 8px;
+            color: white;
+        }
+
+        /* Animated Background */
+        .bg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle, rgba(36, 37, 45, 1) 0%, rgba(0, 0, 0, 1) 100%);
+            z-index: -1;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="bg"></div> <!-- Fancy Background -->
+
+    <!-- Home Section -->
+    <div id="home">
+        <h1>Welcome to Watch Together</h1>
+        <input type="text" id="user-name-input" placeholder="Enter your name" required>
+        <button onclick="createRoom()">Create Room</button>
+        <div>
+            <input type="text" id="room-id" placeholder="Enter Room ID" required>
+            <input type="password" id="room-password" placeholder="Enter Room Password" required>
+            <button onclick="joinRoom()">Join Room</button>
+        </div>
+    </div>
+
+    <!-- Room Section -->
+    <div id="room">
+        <h2>Room ID: <span id="roomIdDisplay"></span></h2>
+
+        <div id="chat-container">
+            <div id="chat-box"></div>
+            <input type="text" id="chat-input" placeholder="Type a message...">
+        </div>
+
+        <button id="mute-button" onclick="toggleMute()">Mute Mic</button>
+
+        <div id="user-list">
+            <h4>Users in the Room</h4>
+            <ul id="users-in-room">
+                <!-- Users will be listed here -->
+            </ul>
+        </div>
+
+        <div id="video-player">
+            <h4>Watch YouTube Video</h4>
+            <input type="text" id="youtube-url" placeholder="Enter YouTube URL" />
+            <button onclick="loadVideo()">Load Video</button>
+            <div id="video-container"></div>
+        </div>
+
+        <div class="user-info" id="user-info">
+            <!-- User info will be displayed here -->
+        </div>
+    </div>
+
+    <script>
+        let isMuted = false;
+        let usersInRoom = [];
+        let userName = '';
+        let roomPassword = '';
+        let currentRoomId = '';
+        let localStream;
+        let peerConnections = {};
+
+        // Create Room
+        function createRoom() {
+            userName = document.getElementById('user-name-input').value;
+            if (userName.trim() === '') {
+                alert('Please enter your name');
+                return;
+            }
+
+            roomPassword = prompt("Please set a password for your room:");
+            currentRoomId = generateRoomId();
+
+            usersInRoom.push({ name: userName, muted: true }); // Auto-mute on room creation
+
+            document.getElementById('home').style.display = 'none';
+            document.getElementById('room').style.display = 'block';
+            document.getElementById('roomIdDisplay').textContent = `Room ID: ${currentRoomId}`; // Dynamic Room ID
+            updateUserList();
+            startAudioChat(); // Automatically start audio chat when room is created
+        }
+
+        // Generate a Random Room ID (for simplicity)
+        function generateRoomId() {
+            return Math.floor(Math.random() * 10000);
+        }
+
+        // Join Room
+        function joinRoom() {
+            const roomId = document.getElementById('room-id').value;
+            const enteredPassword = document.getElementById('room-password').value;
+
+            if (roomId == currentRoomId && enteredPassword === roomPassword) {
+                userName = document.getElementById('user-name-input').value;
+                if (userName.trim() === '') {
+                    alert('Please enter your name');
+                    return;
+                }
+
+                usersInRoom.push({ name: userName, muted: true }); // Auto-mute on joining
+                document.getElementById('home').style.display = 'none';
+                document.getElementById('room').style.display = 'block';
+                document.getElementById('roomIdDisplay').textContent = `Room ID: ${roomId}`;
+                updateUserList();
+                startAudioChat(); // Automatically start audio chat when user joins
+            } else {
+                alert('Invalid Room ID or Password');
+            }
+        }
+
+        // Update User List
+        function updateUserList() {
+            const usersList = document.getElementById('users-in-room');
+            usersList.innerHTML = ''; // Clear existing list
+            usersInRoom.forEach(user => {
+                const li = document.createElement('li');
+                li.textContent = `${user.name} ${user.muted ? '(Muted)' : ''}`;
+                usersList.appendChild(li);
+            });
+        }
+
+        // Mute/Unmute Function
+        function toggleMute() {
+            isMuted = !isMuted;
+            const muteButton = document.getElementById('mute-button');
+            muteButton.classList.toggle('muted');
+            muteButton.textContent = isMuted ? 'Unmute Mic' : 'Mute Mic';
+
+            if (localStream) {
+                localStream.getTracks().forEach(track => {
+                    if (track.kind === 'audio') {
+                        track.enabled = !isMuted;
+                    }
+                });
+            }
+
+            // Update local user's mute status
+            usersInRoom.forEach(user => {
+                if (user.name === userName) {
+                    user.muted = isMuted;
+                }
+            });
+
+            updateUserList(); // Refresh the user list with mute status
+        }
+
+        // Start Audio Chat (WebRTC)
+        function startAudioChat() {
+            if (navigator.mediaDevices) {
+                navigator.mediaDevices.getUserMedia({ audio: true })
+                    .then(stream => {
+                        localStream = stream;
+
+                        // Avoid feedback loop
+                        const localAudio = document.createElement('audio');
+                        localAudio.srcObject = localStream;
+                        localAudio.autoplay = true;
+                        localAudio.muted = true; // Mute local audio to avoid hearing own voice
+                        document.body.appendChild(localAudio);
+
+                        // Handle Peer Connection (for simplicity, assume only one peer connection)
+                        const peerConnection = new RTCPeerConnection();
+                        peerConnections[userName] = peerConnection;
+
+                        // Add local stream to the peer connection
+                        stream.getTracks().forEach(track => peerConnection.addTrack(track, stream));
+
+                        // Handle when another peer adds a track (display their audio)
+                        peerConnection.ontrack = (event) => {
+                            const remoteAudio = document.createElement('audio');
+                            remoteAudio.srcObject = event.streams[0];
+                            remoteAudio.autoplay = true;
+                            document.body.appendChild(remoteAudio);
+                        };
+                    })
+                    .catch(error => {
+                        console.error('Error accessing media devices.', error);
+                    });
+            }
+        }
+
+        // Load YouTube Video
+        function loadVideo() {
+            const url = document.getElementById('youtube-url').value;
+            const videoId = extractYouTubeID(url);
+            if (videoId) {
+                document.getElementById('video-container').innerHTML = 
+                    `<iframe width="100%" height="400px" src="https://www.youtube.com/embed/${videoId}" frameborder="0" allowfullscreen></iframe>`;
+            } else {
+                alert('Please enter a valid YouTube URL');
+            }
+        }
+
+        // Extract YouTube Video ID
+        function extractYouTubeID(url) {
+            const regex = /(?:\?v=|\/embed\/|\/watch\?v=|\/v\/|youtu\.be\/|\/embed\/|\?v=)([^#&?]*).*/;
+            const match = url.match(regex);
+            return (match && match[1].length === 11) ? match[1] : null;
+        }
+
+        // Initialize Event Listeners for Chat
+        document.addEventListener('DOMContentLoaded', () => {
+            const chatInput = document.getElementById('chat-input');
+            chatInput.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') sendMessage();
+            });
+        });
+
+    </script>
+</body>
+</html>
